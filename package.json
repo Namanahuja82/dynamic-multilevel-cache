@@ -1,0 +1,14 @@
+{
+  "name": "dynamic-multilevel-cache",
+  "version": "1.0.0",
+  "description": "A dynamic multilevel caching system",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async-lock": "^1.4.1"
+  }
+}
