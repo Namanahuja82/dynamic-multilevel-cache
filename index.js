@@ -3,8 +3,8 @@ const MultiLevelCache = require('./src/MultiLevelCache');
 async function runExample() {
   const cache = new MultiLevelCache();
 
-  await cache.addCacheLevel(3, 'LRU');
-  await cache.addCacheLevel(2, 'LFU');
+  await cache.addCacheLevel(3, 'LRU');  // L1 Cache
+  await cache.addCacheLevel(2, 'LFU');  // L2 Cache
 
   await cache.put("A", "1");
   await cache.put("B", "2");
@@ -28,6 +28,14 @@ async function runExample() {
   console.log("\nAttempting to get non-existent key:");
   console.log("Get F:", await cache.get("F"));
 
+  // Handling invalid eviction policy
+  try {
+    await cache.addCacheLevel(2, 'INVALID_POLICY');
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  // Adding a new L2 cache after removing
   await cache.addCacheLevel(2, 'LRU');
   console.log("\nAfter adding a new L2 cache:");
   await cache.displayCache();

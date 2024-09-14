@@ -1,37 +1,59 @@
 Dynamic Multilevel Caching System
 
-The project explains the implementation of a parallel dynamic multi-tier caching system using Node.js. It efficiently manages data across multilevel caches, allows runtime dynamic addition of cache levels, employs different eviction policies, and has thread safety for parallel operations.
-
+This project implements a parallel dynamic multi-tier caching system using Node.js. It efficiently manages data across multiple cache levels, allows runtime dynamic addition/removal of cache levels, supports different eviction policies, and ensures thread safety for parallel operations.
 Features
 
-Multi-level of Caches (L1, L2, ., Ln)
-Runtime dynamic addition and removal of cache levels
-Different eviction policies have been supported-LRU, LFU
-Data fetch and insertion across the multi-level cache efficiently
-Parallel operation-thread-safe
+    Multi-level Caches (L1, L2, ..., Ln): Supports hierarchical caching, allowing for multiple levels of cache.
+    Dynamic Cache Management: Add or remove cache levels at runtime without downtime.
+    Eviction Policies: Supports both LRU (Least Recently Used) and LFU (Least Frequently Used) eviction policies.
+    Efficient Data Management: Data fetching and insertion are handled efficiently across multiple cache levels.
+    Thread Safety: Ensures safe parallel operations using asynchronous locks.
 
 API
 
-
-MultiLevelCache
-
 All methods are asynchronous and return Promises.
-
 addCacheLevel(size: number, evictionPolicy: string): Promise<void>
-Adds a new cache level with the specified size and eviction policy (LRU or LFU).
+
+Adds a new cache level with the specified size and eviction policy (either LRU or LFU).
 get(key: string): Promise<string | null>
-Retrieves the data corresponding to the key. If not found, returns null.
+
+Retrieves the data associated with the given key. If the key is not found, returns null.
 put(key: string, value: string): Promise<void>
+
 Inserts the key-value pair into the L1 cache.
 removeCacheLevel(level: number): Promise<void>
-Removes a cache level by specifying its index (L1, L2, ..., Ln).
+
+Removes a cache level by specifying its index (e.g., L1, L2, ..., Ln).
 displayCache(): Promise<void>
-Prints the current state of each cache level, showing the keys and values.
 
+Displays the current state of all cache levels, showing the keys and their corresponding values.
+Design Decisions
+Modular Structure
 
-Decisions
-Modular Structure: The top three classes in the system are CacheEntry, CacheLevel, and MultiLevelCache. This supports good readability and maintainability.
-Map Data Structure: Internal utilization of the predefined JavaScript Map for storing cache entries efficiently deals with key-value pairs for storage and lookups.
-Eviction Policies: The system supports both Least Recently Used and Least Frequently Used as eviction policies. We have implemented the eviction policies in the CacheLevel class.
-Data Promotion: Whenever data is located on a lower cache level, it always gets promoted to higher levels due to the reduction in time taken by subsequent accesses to that particular data. Dynamic Level Management: In this cache, addition and removal of cache levels at runtime can be done with ease. Concurrency: Async-Lock will make all cache operations thread-safe, meaning any number of threads can have parallel access to the cache safely.
+The system is divided into three main classes:
 
+    CacheEntry: Represents individual cache entries.
+    CacheLevel: Manages cache operations for a single level.
+    MultiLevelCache: Orchestrates cache operations across multiple levels.
+
+This structure enhances readability and maintainability.
+Map Data Structure
+
+We use the JavaScript Map to efficiently store and manage key-value pairs. It allows for fast lookups, insertions, and deletions.
+Eviction Policies
+
+We implement two eviction policies:
+
+    LRU (Least Recently Used): Removes the least recently accessed items.
+    LFU (Least Frequently Used): Removes the least frequently accessed items.
+
+These policies are implemented within the CacheLevel class.
+Data Promotion
+
+When data is found at a lower cache level, it is automatically promoted to higher levels, ensuring faster access times for subsequent requests.
+Dynamic Level Management
+
+The system allows the addition and removal of cache levels at runtime, offering great flexibility and adaptability.
+Concurrency
+
+By using async locks (async-lock), all cache operations are thread-safe, meaning that multiple threads can interact with the cache concurrently without issues.
